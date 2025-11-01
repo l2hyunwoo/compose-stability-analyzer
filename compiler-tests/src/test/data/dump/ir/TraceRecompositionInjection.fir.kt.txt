@@ -1,0 +1,65 @@
+data class User {
+  val name: String
+    field = name
+    get
+
+  val age: Int
+    field = age
+    get
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age): User {
+    return User(name = name, age = age)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is User -> return false
+    }
+    val tmp_0: User = other /*as User */
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#name.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "User(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ")"
+  }
+
+}
+
+@TraceRecomposition(tag = "user-card", threshold = 1)
+fun UserCard(user: User) {
+  println(message = "Rendering user: " + user.<get-name>())
+}
+
+fun testFunction() {
+  val user: User = User(name = "Alice", age = 25)
+  UserCard(user = user)
+}

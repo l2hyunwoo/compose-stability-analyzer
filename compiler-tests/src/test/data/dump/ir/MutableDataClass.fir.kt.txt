@@ -1,0 +1,66 @@
+data class MutableUser {
+  var name: String
+    field = name
+    get
+    set
+
+  var age: Int
+    field = age
+    get
+    set
+
+  constructor(name: String, age: Int) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  operator fun component1(): String {
+    return <this>.#name
+  }
+
+  operator fun component2(): Int {
+    return <this>.#age
+  }
+
+  fun copy(name: String = <this>.#name, age: Int = <this>.#age): MutableUser {
+    return MutableUser(name = name, age = age)
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      EQEQEQ(arg0 = <this>, arg1 = other) -> return true
+    }
+    when {
+      other !is MutableUser -> return false
+    }
+    val tmp_0: MutableUser = other /*as MutableUser */
+    when {
+      EQEQ(arg0 = <this>.#name, arg1 = tmp_0.#name).not() -> return false
+    }
+    when {
+      EQEQ(arg0 = <this>.#age, arg1 = tmp_0.#age).not() -> return false
+    }
+    return true
+  }
+
+  override fun hashCode(): Int {
+    var result: Int = <this>.#name.hashCode()
+    result = result.times(other = 31).plus(other = <this>.#age.hashCode())
+    return result
+  }
+
+  override fun toString(): String {
+    return "MutableUser(" + "name=" + <this>.#name + ", " + "age=" + <this>.#age + ")"
+  }
+
+}
+
+fun printUser(user: MutableUser) {
+  println(message = user.<get-name>() + " is " + user.<get-age>() + " years old")
+}
+
+fun updateUser(user: MutableUser) {
+  user.<set-name>(<set-?> = "Bob")
+  user.<set-age>(<set-?> = 30)
+}

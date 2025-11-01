@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Designed and developed by 2025 skydoves (Jaewoong Eum)
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+<idea-plugin>
+    <id>com.skydoves.compose.stability.analyzer.idea</id>
+    <name>Compose Stability Analyzer</name>
+    <vendor email="skydoves2@gmail.com" url="https://github.com/skydoves">skydoves (Jaewoong Eum)</vendor>
+
+    <description>
+        Provides real-time stability analysis for Jetpack Compose functions in Android Studio.
+        Shows stability information directly in the IDE through hover tooltips, gutter icons, and inline hints.
+    </description>
+
+    <!-- Plugin dependencies -->
+    <depends>com.intellij.modules.platform</depends>
+    <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.java</depends>
+
+    <!-- K2 mode compatibility - plugin works in both K1 and K2 modes -->
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <supportsKotlinPluginMode supportsK2="true"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Settings -->
+        <applicationService
+                serviceImplementation="com.skydoves.compose.stability.idea.settings.StabilitySettingsState"/>
+
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.skydoves.compose.stability.idea.settings.StabilitySettingsConfigurable"
+                id="com.skydoves.compose.stability.idea.settings.StabilitySettingsConfigurable"
+                displayName="Compose Stability Analyzer"/>
+
+        <!-- Documentation provider for hover tooltips -->
+        <lang.documentationProvider
+                language="kotlin"
+                implementationClass="com.skydoves.compose.stability.idea.StabilityDocumentationProvider"
+                order="first"/>
+
+        <!-- Line marker provider for gutter icons -->
+        <codeInsight.lineMarkerProvider
+                language="kotlin"
+                implementationClass="com.skydoves.compose.stability.idea.StabilityLineMarkerProvider"/>
+
+        <!-- Inlay hints provider for inline parameter hints -->
+        <codeInsight.inlayProvider
+                language="kotlin"
+                implementationClass="com.skydoves.compose.stability.idea.StabilityInlayHintsProvider"/>
+
+        <!-- Annotator for code highlighting -->
+        <annotator
+                language="kotlin"
+                implementationClass="com.skydoves.compose.stability.idea.StabilityAnnotator"/>
+
+        <!-- Inspection for unstable composables -->
+        <localInspection
+                language="kotlin"
+                displayName="Unstable Composable Function"
+                groupName="Compose"
+                enabledByDefault="true"
+                level="WARNING"
+                implementationClass="com.skydoves.compose.stability.idea.StabilityInspection"/>
+
+        <!-- Intention to add @TraceRecomposition -->
+        <intentionAction>
+            <language>kotlin</language>
+            <className>com.skydoves.compose.stability.idea.quickfix.AddTraceRecompositionIntention</className>
+            <category>Compose</category>
+        </intentionAction>
+
+        <!-- Notification group -->
+        <notificationGroup
+                id="Compose Stability Analyzer"
+                displayType="BALLOON"/>
+    </extensions>
+
+    <actions>
+        <!-- Optional: Add menu actions -->
+        <action
+                id="com.skydoves.compose.stability.idea.AnalyzeStabilityAction"
+                class="com.skydoves.compose.stability.idea.AnalyzeStabilityAction"
+                text="Analyze Compose Stability"
+                description="Analyze stability of all composable functions in the current file">
+            <add-to-group group-id="CodeMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

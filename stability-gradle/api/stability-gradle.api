@@ -1,0 +1,45 @@
+public abstract class com/skydoves/compose/stability/gradle/StabilityAnalyzerExtension {
+	public fun <init> (Lorg/gradle/api/file/ProjectLayout;Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
+	public final fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public final fun getStabilityValidation ()Lcom/skydoves/compose/stability/gradle/StabilityValidationConfig;
+	public final fun stabilityValidation (Lorg/gradle/api/Action;)V
+}
+
+public final class com/skydoves/compose/stability/gradle/StabilityAnalyzerGradlePlugin : org/gradle/api/Plugin {
+	public static final field Companion Lcom/skydoves/compose/stability/gradle/StabilityAnalyzerGradlePlugin$Companion;
+	public fun <init> ()V
+	public synthetic fun apply (Ljava/lang/Object;)V
+	public fun apply (Lorg/gradle/api/Project;)V
+}
+
+public final class com/skydoves/compose/stability/gradle/StabilityAnalyzerGradlePlugin$Companion {
+}
+
+public abstract class com/skydoves/compose/stability/gradle/StabilityCheckTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun check ()V
+	public abstract fun getIgnoredClasses ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getIgnoredPackages ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getStabilityDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getStabilityInputFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public abstract class com/skydoves/compose/stability/gradle/StabilityDumpTask : org/gradle/api/DefaultTask {
+	public fun <init> ()V
+	public final fun dump ()V
+	public abstract fun getIgnoredClasses ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getIgnoredPackages ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getOutputDir ()Lorg/gradle/api/file/DirectoryProperty;
+	public abstract fun getStabilityInputFile ()Lorg/gradle/api/file/RegularFileProperty;
+}
+
+public abstract class com/skydoves/compose/stability/gradle/StabilityValidationConfig {
+	public fun <init> (Lorg/gradle/api/file/ProjectLayout;Lorg/gradle/api/model/ObjectFactory;)V
+	public final fun getEnabled ()Lorg/gradle/api/provider/Property;
+	public final fun getIgnoredClasses ()Lorg/gradle/api/provider/ListProperty;
+	public final fun getIgnoredPackages ()Lorg/gradle/api/provider/ListProperty;
+	public final fun getIgnoredProjects ()Lorg/gradle/api/provider/ListProperty;
+	public final fun getIncludeTests ()Lorg/gradle/api/provider/Property;
+	public final fun getOutputDir ()Lorg/gradle/api/file/DirectoryProperty;
+}
+

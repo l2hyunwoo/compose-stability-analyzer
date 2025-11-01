@@ -1,0 +1,169 @@
+public final class com/skydoves/compose/stability/runtime/ComposableStabilityInfo {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ZZZLjava/util/List;ZLjava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;ZZZLjava/util/List;ZLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Z
+	public final fun component4 ()Z
+	public final fun component5 ()Z
+	public final fun component6 ()Ljava/util/List;
+	public final fun component7 ()Z
+	public final fun component8 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ZZZLjava/util/List;ZLjava/util/List;)Lcom/skydoves/compose/stability/runtime/ComposableStabilityInfo;
+	public static synthetic fun copy$default (Lcom/skydoves/compose/stability/runtime/ComposableStabilityInfo;Ljava/lang/String;Ljava/lang/String;ZZZLjava/util/List;ZLjava/util/List;ILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/ComposableStabilityInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getFqName ()Ljava/lang/String;
+	public final fun getName ()Ljava/lang/String;
+	public final fun getParameters ()Ljava/util/List;
+	public final fun getReceivers ()Ljava/util/List;
+	public final fun getSummary ()Ljava/lang/String;
+	public final fun getUnstableParameters ()Ljava/util/List;
+	public final fun getUnstableReceivers ()Ljava/util/List;
+	public final fun hasUnstableParameters ()Z
+	public final fun hasUnstableReceivers ()Z
+	public fun hashCode ()I
+	public final fun isReadonly ()Z
+	public final fun isRestartable ()Z
+	public final fun isSkippable ()Z
+	public final fun isSkippableInStrongSkippingMode ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/skydoves/compose/stability/runtime/ComposeStabilityAnalyzer {
+	public static final field INSTANCE Lcom/skydoves/compose/stability/runtime/ComposeStabilityAnalyzer;
+	public final fun getLogger ()Lcom/skydoves/compose/stability/runtime/RecompositionLogger;
+	public final fun isEnabled ()Z
+	public final fun setEnabled (Z)V
+	public final fun setLogger (Lcom/skydoves/compose/stability/runtime/RecompositionLogger;)V
+}
+
+public final class com/skydoves/compose/stability/runtime/DefaultRecompositionLogger : com/skydoves/compose/stability/runtime/RecompositionLogger {
+	public fun <init> ()V
+	public fun log (Lcom/skydoves/compose/stability/runtime/RecompositionEvent;)V
+}
+
+public abstract interface annotation class com/skydoves/compose/stability/runtime/IgnoreStabilityReport : java/lang/annotation/Annotation {
+}
+
+public final class com/skydoves/compose/stability/runtime/ParameterChange {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;ZZ)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Ljava/lang/Object;
+	public final fun component4 ()Ljava/lang/Object;
+	public final fun component5 ()Z
+	public final fun component6 ()Z
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;ZZ)Lcom/skydoves/compose/stability/runtime/ParameterChange;
+	public static synthetic fun copy$default (Lcom/skydoves/compose/stability/runtime/ParameterChange;Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;ZZILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/ParameterChange;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getChanged ()Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getNewValue ()Ljava/lang/Object;
+	public final fun getOldValue ()Ljava/lang/Object;
+	public final fun getStable ()Z
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/skydoves/compose/stability/runtime/ParameterStability : java/lang/Enum {
+	public static final field RUNTIME Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public static final field STABLE Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public static final field UNSTABLE Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public static fun values ()[Lcom/skydoves/compose/stability/runtime/ParameterStability;
+}
+
+public final class com/skydoves/compose/stability/runtime/ParameterStabilityInfo {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public final fun component4 ()Ljava/lang/String;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;)Lcom/skydoves/compose/stability/runtime/ParameterStabilityInfo;
+	public static synthetic fun copy$default (Lcom/skydoves/compose/stability/runtime/ParameterStabilityInfo;Ljava/lang/String;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;ILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/ParameterStabilityInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getName ()Ljava/lang/String;
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getStability ()Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/skydoves/compose/stability/runtime/ReceiverKind : java/lang/Enum {
+	public static final field CONTEXT Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public static final field DISPATCH Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public static final field EXTENSION Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public static fun values ()[Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+}
+
+public final class com/skydoves/compose/stability/runtime/ReceiverStabilityInfo {
+	public fun <init> (Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ReceiverKind;)V
+	public synthetic fun <init> (Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ReceiverKind;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public final fun component3 ()Ljava/lang/String;
+	public final fun component4 ()Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public final fun copy (Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ReceiverKind;)Lcom/skydoves/compose/stability/runtime/ReceiverStabilityInfo;
+	public static synthetic fun copy$default (Lcom/skydoves/compose/stability/runtime/ReceiverStabilityInfo;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ParameterStability;Ljava/lang/String;Lcom/skydoves/compose/stability/runtime/ReceiverKind;ILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/ReceiverStabilityInfo;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getReason ()Ljava/lang/String;
+	public final fun getReceiverKind ()Lcom/skydoves/compose/stability/runtime/ReceiverKind;
+	public final fun getStability ()Lcom/skydoves/compose/stability/runtime/ParameterStability;
+	public final fun getType ()Ljava/lang/String;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/skydoves/compose/stability/runtime/RecompositionEvent {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;ILjava/util/List;Ljava/util/List;)V
+	public final fun component1 ()Ljava/lang/String;
+	public final fun component2 ()Ljava/lang/String;
+	public final fun component3 ()I
+	public final fun component4 ()Ljava/util/List;
+	public final fun component5 ()Ljava/util/List;
+	public final fun copy (Ljava/lang/String;Ljava/lang/String;ILjava/util/List;Ljava/util/List;)Lcom/skydoves/compose/stability/runtime/RecompositionEvent;
+	public static synthetic fun copy$default (Lcom/skydoves/compose/stability/runtime/RecompositionEvent;Ljava/lang/String;Ljava/lang/String;ILjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/RecompositionEvent;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getComposableName ()Ljava/lang/String;
+	public final fun getParameterChanges ()Ljava/util/List;
+	public final fun getRecompositionCount ()I
+	public final fun getTag ()Ljava/lang/String;
+	public final fun getUnstableParameters ()Ljava/util/List;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class com/skydoves/compose/stability/runtime/RecompositionLogger {
+	public abstract fun log (Lcom/skydoves/compose/stability/runtime/RecompositionEvent;)V
+}
+
+public final class com/skydoves/compose/stability/runtime/RecompositionTracker {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;I)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;IILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun logIfThresholdMet ()V
+	public final fun trackParameter (Ljava/lang/String;Ljava/lang/String;Ljava/lang/Object;Z)V
+}
+
+public final class com/skydoves/compose/stability/runtime/RecompositionTrackerKt {
+	public static final fun createRecompositionTracker (Ljava/lang/String;Ljava/lang/String;I)Lcom/skydoves/compose/stability/runtime/RecompositionTracker;
+	public static synthetic fun createRecompositionTracker$default (Ljava/lang/String;Ljava/lang/String;IILjava/lang/Object;)Lcom/skydoves/compose/stability/runtime/RecompositionTracker;
+}
+
+public final class com/skydoves/compose/stability/runtime/RememberRecompositionTracker_androidKt {
+	public static final fun rememberRecompositionTracker (Ljava/lang/String;Ljava/lang/String;I)Lcom/skydoves/compose/stability/runtime/RecompositionTracker;
+}
+
+public abstract interface annotation class com/skydoves/compose/stability/runtime/StableForAnalysis : java/lang/annotation/Annotation {
+}
+
+public abstract interface annotation class com/skydoves/compose/stability/runtime/TraceRecomposition : java/lang/annotation/Annotation {
+	public abstract fun tag ()Ljava/lang/String;
+	public abstract fun threshold ()I
+}
+
