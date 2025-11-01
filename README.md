@@ -18,9 +18,9 @@ Additionally, you can trace the reason of your composable function is triggered 
 
 The sponsors listed below made it possible for this project to be released as open source. Many thanks to all of them for their support!
 
-<a href="https://github.com/GetStream/vision-agents"><img alt="Profile" src="art/logo-vision-agents.png" width="300"/></a>
+<a href="https://github.com/GetStream/Vision-Agents/?utm_source=github&utm_medium=devrel&utm_campaign=jaewoong-github"><img alt="Profile" src="art/logo-vision-agents.png" width="300"/></a>
 
-**[Vision Agents](https://github.com/GetStream/vision-agents)** is an open-source Video AI framework for building real-time voice and video applications. The framework is edge/transport agnostic, meaning developers can also bring any edge layer they like.
+**[Vision Agents](https://github.com/GetStream/Vision-Agents/?utm_source=github&utm_medium=devrel&utm_campaign=jaewoong-github)** is an open-source Video AI framework for building real-time voice and video applications. The framework is edge/transport agnostic, meaning developers can also bring any edge layer they like.
 
 <a href="https://coderabbit.link/Jaewoong" target="_blank"> <img width="300" alt="coderabbit" src="https://www.coderabbit.ai/_next/image?url=https%3A%2F%2Fvictorious-bubble-f69a016683.media.strapiapp.com%2FCr_logo_dark_f656abe8e3.png&w=384&q=75" /></a>
 
