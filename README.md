@@ -19,7 +19,7 @@ The sponsors listed below made it possible for this project to be released as op
 
 <a href="https://github.com/GetStream/vision-agents"><img alt="Profile" src="art/logo-vision-agents.png" width="300"/></a>
 
-**[Vision Agents](https://github.com/GetStream/vision-agents)** is an open-source Video AI framework for building real-time voice and video applications. The framework is edge/transport agnostic meaning developers can also bring any edge layer they like.
+**[Vision Agents](https://github.com/GetStream/vision-agents)** is an open-source Video AI framework for building real-time voice and video applications. The framework is edge/transport agnostic, meaning developers can also bring any edge layer they like.
 
 <a href="https://coderabbit.link/Jaewoong" target="_blank"> <img width="300" alt="coderabbit" src="https://www.coderabbit.ai/_next/image?url=https%3A%2F%2Fvictorious-bubble-f69a016683.media.strapiapp.com%2FCr_logo_dark_f656abe8e3.png&w=384&q=75" /></a>
 
@@ -38,9 +38,11 @@ This plugin provides real-time visual feedback about your composables' stability
 
 ### How to Install in Android Studio
 
-You can download the Compose Stability Analyzer Plugin with the step below:
+You can download the Compose Stability Analyzer Plugin with the steps below:
 
 1. Download the idea plugin file below:
+
+[compose-stability-analyzer-idea-0.4.0.zip](https://github.com/user-attachments/files/23287212/compose-stability-analyzer-idea-0.4.0.zip)
 
 2. Open **Android Studio** > **Settings** (or **Preferences**) > **Plugins** > **⚙️ icon** > **Install Plugin from Disk...** Select the `.zip` file > **Restart Android Studio**.
 
@@ -82,7 +84,7 @@ Code inspections go beyond visual indicators, they actively suggest improvements
 3. **Add @TraceRecomposition** to help you debug recompositions
 4. **Provide suppression options** if the instability is intentional
 
-This is like having automated code review for Compose performance. The plugin doesn't just tell you about problems, it helps you fix them.
+This is like having an automated code review for Compose performance. The plugin doesn't just tell you about problems, it helps you fix them.
 
 > **Troubleshooting**: If the plugin doesn't appear to work, check **Settings → Tools → Compose Stability Analyzer** and make sure **Enable stability checks** is turned on.
 
@@ -97,15 +99,15 @@ You can change the configuration on the way below:
 ![preview](art/preview4.png)
 ![preview](art/preview5.png)
 
-## Stability Analzyer for Tracking Runtime Recomposition
+## Stability Analyzer for Tracking Runtime Recomposition
 
-You can track the recomposition for specific composable functions with the `@TraceRecomposition` annotation on runtime. You don't need to write any logging code yourself, just add the annotation, run your app, and watch detailed recomposition logs appear in Logcat. It also supports Kotlin Multiplatform.
+You can track the recomposition for specific composable functions with the `@TraceRecomposition` annotation at runtime. You don't need to write any logging code yourself, just add the annotation, run your app, and watch detailed recomposition logs appear in Logcat. It also supports Kotlin Multiplatform.
 
 ![preview](art/preview6.png)
 
 This is incredibly useful for:
 - **Debugging performance issues**: Find out which composables recompose too often, and why it was happen.
-- **Monitor stability performance**: Set a threshold (`@TraceRecomposition(threshold = 15)`) and send a Firebase event or any custom analytics event to your cloud service to track which composable functions are experiencing excessive recompositions and exaime the problems.
+- **Monitor stability performance**: Set a threshold (`@TraceRecomposition(threshold = 15)`) and send a Firebase event or any custom analytics event to your cloud service to track which composable functions are experiencing excessive recompositions and examine the problems.
 - **Understanding Compose behavior**: Learn how state changes trigger recompositions.
 - **Validating optimizations**: Confirm your stability fixes actually work.
 
@@ -121,7 +123,7 @@ Add the dependency below to your `libs.versions.toml` file:
 stability-analyzer = { id = "com.github.skydoves.compose.stability.analyzer", version.ref = "0.4.0" }
 ```
 
-Next, apply the plugin on your root's `build.gradle.kts` file like the below:
+Next, apply the plugin on your root's `build.gradle.kts` file like below:
 
 ```kotlin
 alias(libs.plugins.stability.analyzer)
@@ -189,7 +191,7 @@ fun FrequentlyRecomposingScreen() {
 
 **Why thresholds matter**
 
-Many composables recompose 1-2 times during initial setup. These are expected and not performance issues. By using `threshold = 3` or specific number, you filter out the noise and focus on actual problems, composables that keep recomposing during user interaction.
+Many composables recompose 1-2 times during initial setup. These are expected and not performance issues. By using `threshold = 3` or a specific number, you filter out the noise and focus on actual problems, composables that keep recomposing during user interaction.
 
 The real example might be like so:
 
@@ -281,9 +283,9 @@ class MyApp : Application() {
 
 - Always wrap with `BuildConfig.DEBUG` to avoid performance overhead in production or filter them clearly on the custom logger.
 - If you don't enable `LoggerProvider`, no logs will appear even with `@TraceRecomposition`.
-- This logging has minimal performance impact in debug builds but should still be disabled in release builds for any security reason of your app.
+- This logging has minimal performance impact in debug builds but should still be disabled in release builds for any security reasons of your app.
 
-Also, you can completely re-define the logging behaviors by setting your custom logger like the example below:
+Also, you can completely redefine the logging behaviors by setting your custom logger like the example below:
 
 ```kotlin
 ComposeStabilityAnalyzer.setLogger(object : RecompositionLogger {
@@ -714,7 +716,7 @@ Now every pull request gets automatically checked for stability regressions!
 
 ### Configuration
 
-You can customize what gets tracked and where files are stored on your gradle file:
+You can customize what gets tracked and where files are stored in your Gradle file:
 
 ```kotlin
 // In your build.gradle.kts
