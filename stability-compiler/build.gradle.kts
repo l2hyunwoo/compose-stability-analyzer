@@ -27,16 +27,13 @@ kotlin {
 }
 
 dependencies {
+  compileOnly(libs.kotlin.stdlib)
   compileOnly(libs.kotlin.compiler.embeddable)
-  compileOnly(libs.androidx.compose.compiler)
   api(project(":stability-runtime"))
 
-  // Test dependencies
   testImplementation(kotlin("test"))
   testImplementation(kotlin("test-junit"))
   testImplementation(libs.kotlin.compiler.embeddable)
-  testImplementation(libs.androidx.compose.compiler)
-  testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.6.0")
 
   testRuntimeOnly(kotlin("compiler"))
   testImplementation(kotlin("reflect"))

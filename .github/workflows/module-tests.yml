@@ -1,0 +1,162 @@
+name: Module Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ '*' ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  compiler-plugin-tests:
+    name: Compiler Plugin Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build stability-compiler
+        run: ./gradlew :stability-compiler:build --no-daemon --stacktrace
+
+      - name: Run stability-compiler tests
+        run: ./gradlew :stability-compiler:test --no-daemon --stacktrace
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiler-test-results
+          path: stability-compiler/build/reports/tests/
+
+  compiler-tests:
+    name: Compiler Tests (FIR/IR Dumps)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build compiler-tests
+        run: ./gradlew :compiler-tests:build --no-daemon --stacktrace
+
+      - name: Run compiler-tests
+        run: ./gradlew :compiler-tests:test --no-daemon --stacktrace
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compiler-tests-results
+          path: compiler-tests/build/reports/tests/
+
+  runtime-tests:
+    name: Runtime Module Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build stability-runtime
+        run: ./gradlew :stability-runtime:build --no-daemon --stacktrace
+
+      - name: Run JVM tests
+        run: ./gradlew :stability-runtime:jvmTest --no-daemon --stacktrace
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: runtime-test-results
+          path: stability-runtime/build/reports/tests/
+
+  gradle-plugin-tests:
+    name: Gradle Plugin Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build stability-gradle
+        run: ./gradlew :stability-gradle:build --no-daemon --stacktrace
+
+      - name: Run stability-gradle tests
+        run: ./gradlew :stability-gradle:test --no-daemon --stacktrace
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-plugin-test-results
+          path: stability-gradle/build/reports/tests/
+
+  lint-tests:
+    name: Lint Module Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: 21
+          cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build stability-lint
+        run: ./gradlew :stability-lint:build --no-daemon --stacktrace
+
+      - name: Run stability-lint tests
+        run: ./gradlew :stability-lint:test --no-daemon --stacktrace
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-test-results
+          path: stability-lint/build/reports/tests/
