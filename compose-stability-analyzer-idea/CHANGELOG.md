@@ -2,6 +2,21 @@
 
 All notable changes to the IntelliJ IDEA plugin will be documented in this file.
 
+## [0.4.2] - 2025-11-03
+
+### Fixed
+- Fixed @Parcelize data classes with stable properties now correctly identified as STABLE (Issue #3)
+- Fixed StackOverflowError when analyzing recursive or self-referential types (Issue #11)
+- Fixed Compose shape types stability analysis (RoundedCornerShape, CircleShape, etc.)
+- Improved @Parcelize analysis to ignore Parcelable interface's runtime stability
+
+### Improved
+- Enhanced cycle detection for recursive type analysis
+- Better handling of complex function type aliases and deeply nested generics
+- Consistent stability analysis behavior with compiler plugin
+
+---
+
 ## [0.4.1] - 2025-11-02
 
 ### Fixed
