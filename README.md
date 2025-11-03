@@ -270,7 +270,7 @@ class MyApp : Application() {
         super.onCreate()
 
         // Enable recomposition tracking ONLY in debug builds
-        LoggerProvider.setEnabled(BuildConfig.DEBUG)
+        ComposeStabilityAnalyzer.setEnabled(BuildConfig.DEBUG)
     }
 }
 ```
@@ -278,7 +278,7 @@ class MyApp : Application() {
 **Important Note**
 
 - Always wrap with `BuildConfig.DEBUG` to avoid performance overhead in production or filter them clearly on the custom logger.
-- If you don't enable `LoggerProvider`, no logs will appear even with `@TraceRecomposition`.
+- If you don't enable `ComposeStabilityAnalyzer`, no logs will appear even with `@TraceRecomposition`.
 - This logging has minimal performance impact in debug builds but should still be disabled in release builds for any security reasons of your app.
 
 Also, you can completely redefine the logging behaviors by setting your custom logger like the example below:
