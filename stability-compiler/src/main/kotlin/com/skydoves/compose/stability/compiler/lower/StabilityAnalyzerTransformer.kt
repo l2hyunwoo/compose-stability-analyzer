@@ -234,7 +234,7 @@ public class StabilityAnalyzerTransformer(
    * 11. Standard collections - RUNTIME
    * 12. Value classes (inline classes)
    * 13. Enums - STABLE
-   * 14. @StabilityInferred - RUNTIME
+   * 14. @Parcelize - check properties
    * 15. Interfaces - RUNTIME
    * 16. Abstract classes - RUNTIME
    * 17. Regular classes (with property analysis)
@@ -339,17 +339,46 @@ public class StabilityAnalyzerTransformer(
       return ParameterStability.STABLE
     }
 
-    // 14. Interfaces - cannot determine (RUNTIME)
+    // 14. @Parcelize data classes - check only properties, ignore Parcelable interface
+    if (clazz.hasAnnotation(FqName("kotlinx.parcelize.Parcelize"))) {
+      val properties = clazz.declarations
+        .filterIsInstance<org.jetbrains.kotlin.ir.declarations.IrProperty>()
+
+      if (properties.isEmpty()) {
+        return ParameterStability.STABLE
+      }
+
+      // Check for var properties
+      if (properties.any { it.isVar }) {
+        return ParameterStability.UNSTABLE
+      }
+
+      // Check property type stability
+      val propertyStabilities = properties.mapNotNull { property ->
+        property.getter?.returnType?.let { analyzeTypeStability(it) }
+      }
+
+      if (propertyStabilities.any { it == ParameterStability.UNSTABLE }) {
+        return ParameterStability.UNSTABLE
+      }
+
+      if (propertyStabilities.all { it == ParameterStability.STABLE }) {
+        return ParameterStability.STABLE
+      }
+      // If properties have mixed stability, fall through to interface check
+    }
+
+    // 15. Interfaces - cannot determine (RUNTIME)
     if (clazz.isInterfaceIr()) {
       return ParameterStability.RUNTIME
     }
 
-    // 15. Abstract classes - cannot determine (RUNTIME)
+    // 16. Abstract classes - cannot determine (RUNTIME)
     if (clazz.modality == org.jetbrains.kotlin.descriptors.Modality.ABSTRACT) {
       return ParameterStability.RUNTIME
     }
 
-    // 16. Regular classes - analyze properties first before checking @StabilityInferred
+    // 17. Regular classes - analyze properties first before checking @StabilityInferred
     val propertyStability = analyzeClassProperties(clazz)
 
     when (propertyStability) {

@@ -48,10 +48,11 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
  * 14. Standard collections (RUNTIME)
  * 15. Value classes
  * 16. Enums
- * 17. Interfaces (RUNTIME)
- * 18. Abstract classes (RUNTIME)
- * 19. Regular classes - property analysis (returns STABLE/UNSTABLE if definitive)
- * 20. @StabilityInferred (RUNTIME - only for uncertain cases)
+ * 17. @Parcelize - check properties
+ * 18. Interfaces (RUNTIME)
+ * 19. Abstract classes (RUNTIME)
+ * 20. Regular classes - property analysis (returns STABLE/UNSTABLE if definitive)
+ * 21. @StabilityInferred (RUNTIME - only for uncertain cases)
  */
 internal class KtStabilityInferencer {
 
@@ -301,7 +302,38 @@ internal class KtStabilityInferencer {
       return KtStability.Certain(stable = true, reason = StabilityConstants.Messages.ENUM_STABLE)
     }
 
-    // 17. Interfaces - cannot determine (RUNTIME)
+    // 17. @Parcelize data classes - check only properties, ignore Parcelable interface
+    val hasParcelize = classSymbol.annotations.any { annotation ->
+      annotation.classId?.asSingleFqName()?.asString() == "kotlinx.parcelize.Parcelize"
+    }
+    if (hasParcelize) {
+      val properties = classSymbol.declaredMemberScope.callables
+        .filterIsInstance<KaPropertySymbol>()
+        .toList()
+
+      // Check for var properties
+      if (properties.any { !it.isVal }) {
+        return KtStability.Certain(
+          stable = false,
+          reason = "Has mutable (var) properties",
+        )
+      }
+
+      // Check property type stability
+      val allPropertiesStable = properties.all { property ->
+        val propertyStability = ktStabilityOf(property.returnType)
+        propertyStability.isStable()
+      }
+
+      if (allPropertiesStable) {
+        return KtStability.Certain(
+          stable = true,
+          reason = "@Parcelize with all stable properties",
+        )
+      }
+    }
+
+    // 18. Interfaces - cannot determine (RUNTIME)
     if (classSymbol.classKind == KaClassKind.INTERFACE) {
       return KtStability.Runtime(
         className = fqName ?: simpleName,
@@ -309,7 +341,7 @@ internal class KtStabilityInferencer {
       )
     }
 
-    // 18. Abstract classes - cannot determine (RUNTIME)
+    // 19. Abstract classes - cannot determine (RUNTIME)
     if (classSymbol.modality == KaSymbolModality.ABSTRACT) {
       return KtStability.Runtime(
         className = fqName ?: simpleName,
@@ -317,7 +349,7 @@ internal class KtStabilityInferencer {
       )
     }
 
-    // 19. Regular classes - analyze properties first before checking @StabilityInferred
+    // 20. Regular classes - analyze properties first before checking @StabilityInferred
     val propertyStability = analyzeClassProperties(classSymbol, currentlyAnalyzing)
 
     return when {
