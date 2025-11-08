@@ -131,12 +131,13 @@ public fun com.skydoves.myapplication.Test(stableUser2: com.skydoves.myapplicati
     - stableUser2: STABLE
 
 @Composable
-public fun com.skydoves.myapplication.Test(myClass2: com.skydoves.myapplication.models.MyClass2, normalClass: com.skydoves.myapplication.models.NormalClass): kotlin.Unit
+public fun com.skydoves.myapplication.Test(myClass2: com.skydoves.myapplication.models.MyClass2, normalClass: com.skydoves.myapplication.models.NormalClass, immutableList: kotlinx.collections.immutable.ImmutableList<kotlin.String>): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - myClass2: UNSTABLE (has mutable properties or unstable members)
     - normalClass: STABLE
+    - immutableList: STABLE (known stable type)
 
 @Composable
 public fun com.skydoves.myapplication.Test(name: kotlin.String, king: kotlin.Float): kotlin.Unit

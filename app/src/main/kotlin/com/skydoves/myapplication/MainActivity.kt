@@ -152,6 +152,7 @@ fun Card(
   elevation: CardElevation = CardDefaults.cardElevation(),
   func: @Composable () -> UnstableUser,
   func2: suspend () -> UnstableUser,
+  func3: suspend () -> StableUser,
   content: @Composable ColumnScope.() -> Unit,
 ) {
 }
@@ -280,6 +281,10 @@ sealed class MySealed {
   class Child : MySealed()
 
   class Child2 : MySealed()
+
+  data class Child3(val stableUser: StableUser) : MySealed()
+
+  data class Child4(val unstableUser: UnstableUser) : MySealed()
 }
 
 @JvmInline
@@ -292,8 +297,12 @@ value class TestValueClass(val test: String)
 @Composable
 fun <T> GenericDisplay(
   item: T,
+  fontWeight4: FontWeight,
   mySealed: MySealed,
   child2: MySealed.Child2,
+  child3: MySealed.Child3,
+  child4: MySealed.Child4,
+  child: MySealed.Child,
   fontWeight: FontWeight,
   fontWeight2: FontWeight?,
   values: kotlin.String,
@@ -354,3 +363,4 @@ fun DebugInfoPanel() {
     }
   }
 }
+// Force recompile

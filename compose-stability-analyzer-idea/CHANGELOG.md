@@ -5,6 +5,16 @@ All notable changes to the IntelliJ IDEA plugin will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **New Compose Stability Tool Window** - View all composables in your project at a glance (Issue #14)
+  - Tree view grouped by module -> package -> file
+  - Color-coded stability indicators (green for stable, red for unstable)
+  - Stability counts at each level shown as (total: XS, YU, ZR) where S=Stable, U=Unstable, R=Runtime
+  - Details pane showing composable information and parameter stability
+  - Double-click navigation to source code location
+  - Filter buttons to show All, Skippable, or Unskippable composables
+  - Refresh button to re-analyze the project
+  - Appears as a dedicated tool window on the right side of the IDE with custom icon
+  - Access via View -> Tool Windows -> Compose Stability or click the icon on the right toolbar
 - New setting: "Show in test source sets" for gutter icons (Issue #21)
 - Gutter icons are now hidden in test directories by default (can be enabled in settings)
 - Support for reading @StabilityInferred annotation parameters for cross-module stability detection (Issue #18)

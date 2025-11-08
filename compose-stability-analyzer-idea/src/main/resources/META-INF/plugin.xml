@@ -86,6 +86,13 @@
         <notificationGroup
                 id="Compose Stability Analyzer"
                 displayType="BALLOON"/>
+
+        <!-- Tool window for viewing all composables -->
+        <toolWindow
+                id="Compose Stability Analyzer"
+                anchor="right"
+                factoryClass="com.skydoves.compose.stability.idea.toolwindow.StabilityToolWindowFactory"
+                icon="/icons/stability.svg"/>
     </extensions>
 
     <actions>

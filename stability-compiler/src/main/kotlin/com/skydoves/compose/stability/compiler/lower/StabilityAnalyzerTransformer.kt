@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.util.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.name.FqName
@@ -223,7 +224,7 @@ public class StabilityAnalyzerTransformer(
    * Analysis order (must match KtStabilityInferencer):
    * 1. Nullable types (MUST be first)
    * 2. Type parameters (T, E, K, V) - RUNTIME
-   * 3. Function types - STABLE
+   * 3. Function types (including suspend) - STABLE
    * 4. Known stable types
    * 5. @Stable/@Immutable annotations
    * 6. Primitives
@@ -235,9 +236,10 @@ public class StabilityAnalyzerTransformer(
    * 12. Value classes (inline classes)
    * 13. Enums - STABLE
    * 14. @Parcelize - check properties
-   * 15. Interfaces - RUNTIME
-   * 16. Abstract classes - RUNTIME
-   * 17. Regular classes (with property analysis)
+   * 15. Sealed classes - STABLE
+   * 16. Interfaces - RUNTIME
+   * 17. Abstract classes - RUNTIME
+   * 18. Regular classes (with property analysis)
    */
   private fun analyzeTypeStability(type: IrType): ParameterStability {
     // 1. Nullable types - MUST be checked first to strip nullability
@@ -245,7 +247,8 @@ public class StabilityAnalyzerTransformer(
       return analyzeTypeStability(type.makeNotNull())
     }
 
-    // 2. Function types (including lambdas, suspend, @Composable) - STABLE
+    // 2. Function types (including lambdas, suspend, @Composable) - STABLE FIRST
+    // This must be checked before getting classSymbol to avoid edge cases
     if (type.isFunctionOrKFunction()) {
       return ParameterStability.STABLE
     }
@@ -255,6 +258,18 @@ public class StabilityAnalyzerTransformer(
       type.classFqName?.asString()
     } catch (e: StackOverflowError) {
       return ParameterStability.RUNTIME
+    }
+
+    // Check for suspend functions using multiple methods
+    val typeString = type.render()
+    val isSuspend = type.isSuspendFunctionTypeOrSubtype() ||
+      (fqName?.startsWith("kotlin.coroutines.SuspendFunction") == true) ||
+      (fqName?.contains("SuspendFunction") == true) ||
+      typeString.startsWith("suspend ") ||
+      typeString.contains("SuspendFunction")
+
+    if (isSuspend) {
+      return ParameterStability.STABLE
     }
 
     val typeId = fqName ?: classSymbol?.owner?.name?.asString() ?: type.render()
@@ -285,12 +300,18 @@ public class StabilityAnalyzerTransformer(
       return ParameterStability.RUNTIME
     }
 
-    // 4. Known stable types
+    // 2c. Known unstable types (Java mutable classes)
+    // Java classes don't expose mutable fields in Kotlin IR, so we need explicit checks
+    if (isKnownUnstableJavaType(fqName)) {
+      return ParameterStability.UNSTABLE
+    }
+
+    // 3. Known stable types
     if (isKnownStableType(type)) {
       return ParameterStability.STABLE
     }
 
-    // 5. Check for @Stable or @Immutable annotations
+    // 4. Check for @Stable or @Immutable annotations
     if (type.hasStableAnnotation()) {
       return ParameterStability.STABLE
     }
@@ -374,18 +395,30 @@ public class StabilityAnalyzerTransformer(
     }
 
     // 16. Abstract classes - cannot determine (RUNTIME)
+    //     EXCEPT sealed classes which are handled by property analysis
     if (clazz.modality == org.jetbrains.kotlin.descriptors.Modality.ABSTRACT) {
-      return ParameterStability.RUNTIME
+      // Check if this is a sealed class (sealed classes are abstract but stable if no mutable props)
+      val isSealed = try {
+        clazz.sealedSubclasses.isNotEmpty()
+      } catch (e: Exception) {
+        false
+      }
+
+      // Only mark as RUNTIME if it's NOT a sealed class
+      if (!isSealed) {
+        return ParameterStability.RUNTIME
+      }
+      // Sealed classes continue to property analysis
     }
 
-    // 17. Regular classes - analyze properties first before checking @StabilityInferred
-    val propertyStability = analyzeClassProperties(clazz)
+    // 18. Regular classes - analyze properties first before checking @StabilityInferred
+    val propertyStability = analyzeClassProperties(clazz, fqName)
 
     when (propertyStability) {
       ParameterStability.STABLE -> return ParameterStability.STABLE
       ParameterStability.UNSTABLE -> return ParameterStability.UNSTABLE
       ParameterStability.RUNTIME -> {
-        // 17. Check @StabilityInferred: parameters=0 means stable, else runtime
+        // 19. Check @StabilityInferred: parameters=0 means stable, else runtime
         val stabilityInferredParams = type.getStabilityInferredParameters()
         return if (stabilityInferredParams == 0) {
           ParameterStability.STABLE
@@ -400,12 +433,21 @@ public class StabilityAnalyzerTransformer(
    * Analyzes class properties to determine overall stability.
    * Matches K2 implementation logic.
    */
-  private fun analyzeClassProperties(clazz: IrClass): ParameterStability {
+  private fun analyzeClassProperties(clazz: IrClass, fqName: String?): ParameterStability {
+    // Check superclass stability first (matches IDE plugin logic)
+    val superClassStability = analyzeSuperclassStability(clazz)
+
     val properties = clazz.declarations
       .filterIsInstance<org.jetbrains.kotlin.ir.declarations.IrProperty>()
 
+    // If no visible properties, return superclass stability or stable
+    // This handles sealed classes (STABLE) and passes to further checks
     if (properties.isEmpty()) {
-      return ParameterStability.STABLE
+      return when {
+        superClassStability != null && superClassStability != ParameterStability.STABLE ->
+          superClassStability
+        else -> ParameterStability.STABLE
+      }
     }
 
     val hasMutableProperty = properties.any { it.isVar }
@@ -427,6 +469,30 @@ public class StabilityAnalyzerTransformer(
 
     // Mixed stability (some RUNTIME) - class needs runtime check
     return ParameterStability.RUNTIME
+  }
+
+  /**
+   * Analyzes superclass stability.
+   * Returns the stability of the superclass, or null if no superclass or superclass is stable.
+   * Matches IDE plugin's analyzeSuperclassStability logic.
+   */
+  private fun analyzeSuperclassStability(clazz: IrClass): ParameterStability? {
+    val superTypes = clazz.superTypes.filter { superType ->
+      // Filter out kotlin.Any and other common base types
+      val fqName = superType.classFqName?.asString()
+      fqName != "kotlin.Any" && fqName != null
+    }
+
+    for (superType in superTypes) {
+      val stability = analyzeTypeStability(superType)
+
+      // If superclass is unstable or runtime, propagate that
+      if (stability != ParameterStability.STABLE) {
+        return stability
+      }
+    }
+
+    return null // All superclasses are stable or no superclasses
   }
 
   /**
@@ -508,6 +574,31 @@ public class StabilityAnalyzerTransformer(
   }
 
   /**
+   * Check if a type is a known unstable Java class.
+   *
+   * This is necessary because Java classes don't expose their mutable fields
+   * as IrProperty in Kotlin IR. The IDE plugin can detect these via K2 Analysis API,
+   * but in IR we need explicit checks for common mutable Java types.
+   */
+  private fun isKnownUnstableJavaType(fqName: String?): Boolean {
+    if (fqName == null) return false
+
+    return fqName in setOf(
+      "java.lang.StringBuilder",
+      "java.lang.StringBuffer",
+      "java.util.Date",
+      "java.util.Calendar",
+      "java.util.GregorianCalendar",
+      "java.util.ArrayList",
+      "java.util.HashMap",
+      "java.util.HashSet",
+      "java.util.LinkedList",
+      "java.util.TreeMap",
+      "java.util.TreeSet",
+    )
+  }
+
+  /**
    * Extract a string value from an IrConst expression using reflection.
    * Needed because IrConst.value is not directly accessible in Kotlin 2.1.0.
    */
@@ -578,13 +669,17 @@ public class StabilityAnalyzerTransformer(
       "STABLE" -> when {
         type.isPrimitiveType() -> "primitive type"
         type.isString() -> "String is immutable"
-        type.isFunctionOrKFunction() -> "function type"
+        type.isFunctionOrKFunction() ||
+          type.isSuspendFunctionTypeOrSubtype() ||
+          type.render().contains("suspend ") ||
+          type.render().contains("SuspendFunction") -> "function type"
         type.hasStableAnnotation() -> "marked @Stable or @Immutable"
         isKnownStableType(type) -> "known stable type"
-        else -> null
+        else -> "class with no mutable properties"
       }
       "UNSTABLE" -> when {
         type.isMutableCollection() -> "mutable collection"
+        isKnownUnstableJavaType(type.classFqName?.asString()) -> "mutable Java class"
         else -> "has mutable properties or unstable members"
       }
       "RUNTIME" -> "requires runtime check"
