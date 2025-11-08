@@ -95,9 +95,21 @@ This is like having an automated code review for Compose performance. The plugin
 
 > **Troubleshooting**: If the plugin doesn't appear to work, check **Settings → Tools → Compose Stability Analyzer** and make sure **Enable stability checks** is turned on.
 
+### Stability Explorer
+
+This JetBrains IDE plugin provides a Stability Explorer directly in your IDE, allowing you to visually trace which composable functions are skippable or non-skippable, and identify which parameters are stable or unstable within a specific package hierarchy. 
+
+![preview](art/preview7.png)
+
+You can enable this explorer with the steps below:
+
+1. Install the [Compose Stability Analyzer Gradle plugin](https://github.com/skydoves/compose-stability-analyzer?tab=readme-ov-file#including-in-your-project)
+2. On your IDE, go to **View** -> **Tool Windows** -> **Compose Stability Analyzer**, then you will see the icon on the right side of your Android Studio. Click the icon then you'll see a panel.
+3. Clean & build your project, and click the refresh button on the panel.
+
 ### Plugin Customization
 
-You can change the colors used for stability indicators to match your IDE theme, enabling Strong Skipping mode for analyzing, visual indicators (showing gutter icons, warnings, inline hints), change parameter hint colors, set a stability configuration file, add ignored type patterns to exclude from the stability analysis.
+You can change the colors used for stability indicators to match your IDE theme, enabling Strong Skipping mode for analyzing, visual indicators (showing gutter icons, warnings, inline hints), change parameter hint colors, enabling analysis in test source sets, set a stability configuration file, add ignored type patterns to exclude from the stability analysis.
 
 You can change the configuration on the way below:
 
