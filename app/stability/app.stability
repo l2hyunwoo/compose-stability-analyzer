@@ -13,7 +13,7 @@ public fun com.skydoves.myapplication.ActionButton(text: kotlin.String, onClick:
     - onClick: STABLE (function type)
 
 @Composable
-public fun com.skydoves.myapplication.Card(modifier: androidx.compose.ui.Modifier?, shape: androidx.compose.ui.graphics.Shape?, colors: androidx.compose.material3.CardColors?, elevation: androidx.compose.material3.CardElevation?, func: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, com.skydoves.myapplication.models.UnstableUser>, func2: kotlin.coroutines.SuspendFunction0<com.skydoves.myapplication.models.UnstableUser>, content: @[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit
+public fun com.skydoves.myapplication.Card(modifier: androidx.compose.ui.Modifier?, shape: androidx.compose.ui.graphics.Shape?, colors: androidx.compose.material3.CardColors?, elevation: androidx.compose.material3.CardElevation?, func: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, com.skydoves.myapplication.models.UnstableUser>, func2: kotlin.coroutines.SuspendFunction0<com.skydoves.myapplication.models.UnstableUser>, func3: kotlin.coroutines.SuspendFunction0<com.skydoves.myapplication.models.StableUser>, content: @[ExtensionFunctionType] kotlin.Function3<androidx.compose.foundation.layout.ColumnScope, androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>): kotlin.Unit
   skippable: false
   restartable: true
   params:
@@ -23,6 +23,7 @@ public fun com.skydoves.myapplication.Card(modifier: androidx.compose.ui.Modifie
     - elevation: STABLE (marked @Stable or @Immutable)
     - func: STABLE (function type)
     - func2: RUNTIME (requires runtime check)
+    - func3: RUNTIME (requires runtime check)
     - content: STABLE (function type)
 
 @Composable
@@ -45,13 +46,17 @@ public fun com.skydoves.myapplication.CounterDisplay(count: com.skydoves.myappli
     - count: STABLE
 
 @Composable
-public fun com.skydoves.myapplication.GenericDisplay(item: T of com.skydoves.myapplication.GenericDisplay, mySealed: com.skydoves.myapplication.MySealed, child2: com.skydoves.myapplication.MySealed.Child2, fontWeight: androidx.compose.ui.text.font.FontWeight, fontWeight2: androidx.compose.ui.text.font.FontWeight?, values: kotlin.String, value: kotlin.Int?, testValueClass: com.skydoves.myapplication.TestValueClass, textAlign: androidx.compose.ui.text.style.TextAlign, textAlign2: androidx.compose.ui.text.style.TextAlign?, displayText: kotlin.Function1<T of com.skydoves.myapplication.GenericDisplay, kotlin.String>): kotlin.Unit
+public fun com.skydoves.myapplication.GenericDisplay(item: T of com.skydoves.myapplication.GenericDisplay, fontWeight4: androidx.compose.ui.text.font.FontWeight, mySealed: com.skydoves.myapplication.MySealed, child2: com.skydoves.myapplication.MySealed.Child2, child3: com.skydoves.myapplication.MySealed.Child3, child4: com.skydoves.myapplication.MySealed.Child4, child: com.skydoves.myapplication.MySealed.Child, fontWeight: androidx.compose.ui.text.font.FontWeight, fontWeight2: androidx.compose.ui.text.font.FontWeight?, values: kotlin.String, value: kotlin.Int?, testValueClass: com.skydoves.myapplication.TestValueClass, textAlign: androidx.compose.ui.text.style.TextAlign, textAlign2: androidx.compose.ui.text.style.TextAlign?, displayText: kotlin.Function1<T of com.skydoves.myapplication.GenericDisplay, kotlin.String>): kotlin.Unit
   skippable: false
   restartable: true
   params:
     - item: RUNTIME (requires runtime check)
+    - fontWeight4: STABLE (marked @Stable or @Immutable)
     - mySealed: STABLE
     - child2: STABLE
+    - child3: STABLE
+    - child4: UNSTABLE (has mutable properties or unstable members)
+    - child: STABLE
     - fontWeight: STABLE (marked @Stable or @Immutable)
     - fontWeight2: STABLE (marked @Stable or @Immutable)
     - values: STABLE (String is immutable)
