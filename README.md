@@ -1,3 +1,7 @@
+<p align="center">
+<img src="https://github.com/user-attachments/assets/d3b1b1ae-d4f4-4ab6-8067-376f74721186" width="120px"/>
+</p>
+
 <h1 align="center">Compose Stability Analyzer</h1></br>
 
 <p align="center">
