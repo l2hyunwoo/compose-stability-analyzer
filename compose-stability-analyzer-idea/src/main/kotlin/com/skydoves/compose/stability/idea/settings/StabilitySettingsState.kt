@@ -90,7 +90,7 @@ public class StabilitySettingsState : PersistentStateComponent<StabilitySettings
    * Enable strong skipping mode support.
    * In strong skipping mode, all lambdas and function references are considered stable.
    */
-  public var isStrongSkippingEnabled: Boolean = false
+  public var isStrongSkippingEnabled: Boolean = true
 
   /**
    * Custom color for stable composable gutter icons (RGB format).
