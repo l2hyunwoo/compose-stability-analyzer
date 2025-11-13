@@ -20,6 +20,7 @@ import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -55,6 +56,12 @@ public abstract class StabilityCheckTask : DefaultTask() {
   @get:Input
   public abstract val ignoredClasses: ListProperty<String>
 
+  /**
+   * Project name (captured at configuration time for configuration cache compatibility).
+   */
+  @get:Input
+  public abstract val projectName: Property<String>
+
   init {
     group = "verification"
     description = "Check composable stability against reference file"
@@ -66,7 +73,9 @@ public abstract class StabilityCheckTask : DefaultTask() {
     if (inputFile == null || !inputFile.exists()) {
       // If the file doesn't exist, it means the module has no composable functions
       // This is expected for modules like activities or utilities without composables
-      logger.lifecycle("ℹ️  No composables found in :${project.name}, skipping stability check")
+      logger.lifecycle(
+        "ℹ️  No composables found in :${projectName.get()}, skipping stability check",
+      )
       return
     }
 
@@ -75,19 +84,23 @@ public abstract class StabilityCheckTask : DefaultTask() {
       // Directory doesn't exist - no baseline has been created yet
       // This is expected for new modules or before the first stabilityDump
       logger.lifecycle(
-        "ℹ️  No stability baseline found for :${project.name}, skipping stability check",
+        "ℹ️  No stability baseline found for :${projectName.get()}, skipping stability check",
       )
-      logger.lifecycle("    Run './gradlew :${project.name}:stabilityDump' to create the baseline")
+      logger.lifecycle(
+        "    Run './gradlew :${projectName.get()}:stabilityDump' to create the baseline",
+      )
       return
     }
 
-    val referenceFile = stabilityDirectory.resolve("${project.name}.stability")
+    val referenceFile = stabilityDirectory.resolve("${projectName.get()}.stability")
     if (!referenceFile.exists()) {
       // Directory exists but file doesn't - unusual but handle gracefully
       logger.lifecycle(
-        "ℹ️  No stability baseline found for :${project.name}, skipping stability check",
+        "ℹ️  No stability baseline found for :${projectName.get()}, skipping stability check",
       )
-      logger.lifecycle("    Run './gradlew :${project.name}:stabilityDump' to create the baseline")
+      logger.lifecycle(
+        "    Run './gradlew :${projectName.get()}:stabilityDump' to create the baseline",
+      )
       return
     }
 

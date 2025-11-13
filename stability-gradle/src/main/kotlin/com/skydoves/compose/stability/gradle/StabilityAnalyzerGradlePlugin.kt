@@ -68,6 +68,7 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
       "stabilityDump",
       StabilityDumpTask::class.java,
     ) {
+      projectName.set(target.name)
       stabilityInputFile.set(
         target.layout.buildDirectory.file("stability/stability-info.json"),
       )
@@ -81,6 +82,7 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
       "stabilityCheck",
       StabilityCheckTask::class.java,
     ) {
+      projectName.set(target.name)
       stabilityInputFile.set(
         target.layout.buildDirectory.file("stability/stability-info.json"),
       )
