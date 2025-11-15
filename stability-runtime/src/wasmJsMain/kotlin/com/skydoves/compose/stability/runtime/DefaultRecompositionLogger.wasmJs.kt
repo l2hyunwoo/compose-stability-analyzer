@@ -42,13 +42,13 @@ public actual class DefaultRecompositionLogger : RecompositionLogger {
 
       val status = when {
         change.changed -> {
-          val oldStr = change.oldValue?.toString() ?: "null"
-          val newStr = change.newValue?.toString() ?: "null"
+          val oldStr = safeToString(change.oldValue)
+          val newStr = safeToString(change.newValue)
           "changed ($oldStr → $newStr)"
         }
 
-        change.stable -> "stable (${change.newValue})"
-        else -> "unstable (${change.newValue})"
+        change.stable -> "stable (${safeToString(change.newValue)})"
+        else -> "unstable (${safeToString(change.newValue)})"
       }
 
       println("$prefix ${change.name}: ${change.type} $status")
@@ -57,6 +57,22 @@ public actual class DefaultRecompositionLogger : RecompositionLogger {
     // Log unstable parameters summary
     if (event.unstableParameters.isNotEmpty()) {
       println("  └─ Unstable parameters: ${event.unstableParameters}")
+    }
+  }
+
+  /**
+   * Safely converts a value to string, handling function types and reflection errors.
+   * Falls back to a simple representation if toString() throws an exception.
+   */
+  private fun safeToString(value: Any?): String {
+    if (value == null) return "null"
+
+    return try {
+      value.toString()
+    } catch (e: Throwable) {
+      // Fallback for any toString() failures (including reflection errors)
+      // On Wasm, we don't have javaClass.simpleName, so use a simpler approach
+      "Object@${value.hashCode().toString(16)}"
     }
   }
 }
