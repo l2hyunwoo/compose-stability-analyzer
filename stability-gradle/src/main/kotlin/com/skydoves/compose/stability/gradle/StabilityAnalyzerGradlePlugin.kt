@@ -47,9 +47,6 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
     // Update this when bumping the library version
     private const val VERSION = "0.5.2"
 
-    // kotlinx.serialization version - must match gradle/libs.versions.toml
-    private const val KOTLINX_SERIALIZATION_VERSION = "1.9.0"
-
     // Compiler option keys
     private const val OPTION_ENABLED = "enabled"
     private const val OPTION_STABILITY_OUTPUT_DIR = "stabilityOutputDir"
@@ -176,15 +173,11 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
       val runtimeDependency = runtimeProject
         ?: "$GROUP_ID:$RUNTIME_ARTIFACT_ID:$VERSION"
 
-      // Add runtime and kotlinx.serialization to all compiler plugin classpath configurations
-      // kotlinx.serialization is needed by the compiler plugin for JSON generation
+      // Add runtime to all compiler plugin classpath configurations
+      // Note: kotlinx.serialization is now embedded in the compiler JAR via shadow plugin
       project.configurations.configureEach {
         if (name.contains("CompilerPluginClasspath", ignoreCase = true)) {
           project.dependencies.add(name, runtimeDependency)
-          project.dependencies.add(
-            name,
-            "org.jetbrains.kotlinx:kotlinx-serialization-json:$KOTLINX_SERIALIZATION_VERSION",
-          )
         }
       }
     }

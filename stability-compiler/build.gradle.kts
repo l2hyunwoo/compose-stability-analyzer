@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.jvm.tasks.Jar
+
 plugins {
   kotlin("jvm")
   alias(libs.plugins.kotlin.serialization)
+  alias(libs.plugins.shadow)
   alias(libs.plugins.nexus.plugin)
+  `maven-publish`
 }
 
 kotlin {
@@ -47,4 +52,38 @@ dependencies {
 java {
   sourceCompatibility = JavaVersion.VERSION_11
   targetCompatibility = JavaVersion.VERSION_11
+}
+
+// Configure shadowJar to embed kotlinx.serialization
+tasks.shadowJar {
+  archiveClassifier.set("all")  // Use a classifier to avoid conflict with jar task
+
+  // Merge all runtime dependencies (including kotlinx-serialization)
+  // By default, shadow excludes nothing, so we need to explicitly configure
+  configurations = listOf(project.configurations.runtimeClasspath.get())
+
+  // Don't relocate - K/Native compiler needs original package names
+  // relocate("kotlinx.serialization", "...")
+
+  // Exclude unnecessary files
+  exclude("META-INF/maven/**")
+  exclude("META-INF/*.SF")
+  exclude("META-INF/*.DSA")
+  exclude("META-INF/*.RSA")
+}
+
+// Make jar task produce the shadowJar content
+tasks.named<Jar>("jar") {
+  dependsOn(tasks.shadowJar)
+  // Copy shadowJar content after jar is built
+  doLast {
+    val shadowTask = tasks.shadowJar.get()
+    val shadowJarFile = shadowTask.archiveFile.get().asFile
+    val jarFile = archiveFile.get().asFile
+
+    if (shadowJarFile.exists()) {
+      shadowJarFile.copyTo(jarFile, overwrite = true)
+      logger.lifecycle("Replaced ${jarFile.name} with shadowJar content")
+    }
+  }
 }
