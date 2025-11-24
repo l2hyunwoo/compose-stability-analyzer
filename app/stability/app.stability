@@ -112,6 +112,15 @@ public fun com.skydoves.myapplication.MutableListDisplay(items: kotlin.collectio
     - items: UNSTABLE (mutable collection)
 
 @Composable
+public fun com.skydoves.myapplication.MyComposable(uiResult: com.skydoves.myapplication.UiResult<kotlin.Unit>, uiResult2: com.skydoves.myapplication.UiResult<com.skydoves.myapplication.models.UnstableUser>, uiResult4: com.skydoves.myapplication.UiResult<kotlin.collections.List<kotlin.String>>): kotlin.Unit
+  skippable: false
+  restartable: true
+  params:
+    - uiResult: RUNTIME (requires runtime check)
+    - uiResult2: RUNTIME (requires runtime check)
+    - uiResult4: RUNTIME (requires runtime check)
+
+@Composable
 public fun com.skydoves.myapplication.RecompositionDemo(): kotlin.Unit
   skippable: true
   restartable: true
