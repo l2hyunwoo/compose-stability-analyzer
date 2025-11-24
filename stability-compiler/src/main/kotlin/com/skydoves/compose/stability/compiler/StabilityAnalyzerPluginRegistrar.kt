@@ -26,6 +26,8 @@ public class StabilityAnalyzerPluginRegistrar : CompilerPluginRegistrar() {
 
   override val supportsK2: Boolean = true
 
+  public val pluginId: String = StabilityAnalyzerCommandLineProcessor.PLUGIN_ID
+
   override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
     val enabled = configuration.get(StabilityAnalyzerConfigurationKeys.KEY_ENABLED, true)
 

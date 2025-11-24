@@ -17,7 +17,9 @@
 
 package com.skydoves.compose.stability.idea
 
+import com.intellij.openapi.project.Project
 import com.skydoves.compose.stability.idea.k2.StabilityAnalyzerK2
+import com.skydoves.compose.stability.idea.settings.StabilityProjectSettingsState
 import com.skydoves.compose.stability.idea.settings.StabilitySettingsState
 import com.skydoves.compose.stability.runtime.ComposableStabilityInfo
 import com.skydoves.compose.stability.runtime.ParameterStability
@@ -72,9 +74,19 @@ internal object StabilityAnalyzer {
 
   /**
    * Get custom stable type patterns from configuration file.
+   * Uses project-level settings first, falls back to global settings.
    */
-  private val customStablePatterns: List<Regex>
-    get() = settings.getCustomStableTypesAsRegex()
+  private fun getCustomStablePatterns(project: Project?): List<Regex> {
+    if (project != null) {
+      val projectPatterns = StabilityProjectSettingsState.getInstance(
+        project,
+      ).getCustomStableTypesAsRegex()
+      if (projectPatterns.isNotEmpty()) {
+        return projectPatterns
+      }
+    }
+    return settings.getCustomStableTypesAsRegex()
+  }
 
   /**
    * Check if a fully qualified type name should be ignored based on user settings.
@@ -88,9 +100,9 @@ internal object StabilityAnalyzer {
   /**
    * Check if a fully qualified type name should be considered stable based on custom configuration.
    */
-  private fun isCustomStableType(fqName: String?): Boolean {
+  private fun isCustomStableType(fqName: String?, project: Project? = null): Boolean {
     if (fqName == null) return false
-    return customStablePatterns.any { pattern -> pattern.matches(fqName) }
+    return getCustomStablePatterns(project).any { pattern -> pattern.matches(fqName) }
   }
 
   /**
@@ -303,7 +315,7 @@ internal object StabilityAnalyzer {
             ParameterStability.STABLE,
             "Ignored by user settings: $fqName",
           )
-        } else if (isCustomStableType(fqName)) {
+        } else if (isCustomStableType(fqName, param.project)) {
           StabilityResult(
             ParameterStability.STABLE,
             "Custom stable type from configuration: $fqName",
@@ -414,7 +426,7 @@ internal object StabilityAnalyzer {
             }
 
             // Check if type is custom stable
-            if (isCustomStableType(fqName)) {
+            if (isCustomStableType(fqName, typeRef.project)) {
               return StabilityResult(
                 ParameterStability.STABLE,
                 "Custom stable type from configuration: $fqName",

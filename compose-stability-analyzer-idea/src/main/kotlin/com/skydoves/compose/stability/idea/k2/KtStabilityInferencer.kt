@@ -15,8 +15,10 @@
  */
 package com.skydoves.compose.stability.idea.k2
 
+import com.intellij.openapi.project.Project
 import com.skydoves.compose.stability.idea.StabilityAnalysisConstants
 import com.skydoves.compose.stability.idea.StabilityConstants
+import com.skydoves.compose.stability.idea.settings.StabilityProjectSettingsState
 import com.skydoves.compose.stability.idea.settings.StabilitySettingsState
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
@@ -55,7 +57,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeNullability
  * 20. Regular classes - property analysis (returns STABLE/UNSTABLE if definitive)
  * 21. @StabilityInferred (RUNTIME - only for uncertain cases)
  */
-internal class KtStabilityInferencer {
+internal class KtStabilityInferencer(private val project: Project? = null) {
 
   private val settings: StabilitySettingsState
     get() = StabilitySettingsState.getInstance()
@@ -690,11 +692,19 @@ internal class KtStabilityInferencer {
 
   /**
    * Check if type is custom stable based on user configuration.
+   * Uses project-level settings first, falls back to global settings.
    */
   private fun isCustomStableType(fqName: String?): Boolean {
     if (fqName == null) return false
 
-    val customPatterns = settings.getCustomStableTypesAsRegex()
+    val customPatterns = if (project != null) {
+      val projectPatterns = StabilityProjectSettingsState.getInstance(
+        project,
+      ).getCustomStableTypesAsRegex()
+      if (projectPatterns.isNotEmpty()) projectPatterns else settings.getCustomStableTypesAsRegex()
+    } else {
+      settings.getCustomStableTypesAsRegex()
+    }
     return customPatterns.any { pattern -> pattern.matches(fqName) }
   }
 

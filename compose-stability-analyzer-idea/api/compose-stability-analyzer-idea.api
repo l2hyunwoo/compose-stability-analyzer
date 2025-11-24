@@ -79,8 +79,24 @@ public final class com/skydoves/compose/stability/idea/quickfix/AddTraceRecompos
 	public fun isAvailable (Lcom/intellij/openapi/project/Project;Lcom/intellij/openapi/editor/Editor;Lcom/intellij/psi/PsiElement;)Z
 }
 
-public final class com/skydoves/compose/stability/idea/settings/StabilitySettingsConfigurable : com/intellij/openapi/options/BoundConfigurable {
+public final class com/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState : com/intellij/openapi/components/PersistentStateComponent {
+	public static final field Companion Lcom/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState$Companion;
 	public fun <init> ()V
+	public final fun getCustomStableTypesAsRegex ()Ljava/util/List;
+	public final fun getStabilityConfigurationPath ()Ljava/lang/String;
+	public fun getState ()Lcom/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState;
+	public synthetic fun getState ()Ljava/lang/Object;
+	public fun loadState (Lcom/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState;)V
+	public synthetic fun loadState (Ljava/lang/Object;)V
+	public final fun setStabilityConfigurationPath (Ljava/lang/String;)V
+}
+
+public final class com/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState$Companion {
+	public final fun getInstance (Lcom/intellij/openapi/project/Project;)Lcom/skydoves/compose/stability/idea/settings/StabilityProjectSettingsState;
+}
+
+public final class com/skydoves/compose/stability/idea/settings/StabilitySettingsConfigurable : com/intellij/openapi/options/BoundConfigurable {
+	public fun <init> (Lcom/intellij/openapi/project/Project;)V
 	public fun apply ()V
 	public fun createPanel ()Lcom/intellij/openapi/ui/DialogPanel;
 	public fun isModified ()Z

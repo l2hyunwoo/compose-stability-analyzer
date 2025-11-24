@@ -72,7 +72,7 @@ internal object StabilityAnalyzerK2 {
   private fun analyzeWithK2Session(function: KtNamedFunction): ComposableStabilityInfo {
     // Get function symbol
     val functionSymbol = function.symbol
-    val inferencer = KtStabilityInferencer()
+    val inferencer = KtStabilityInferencer(function.project)
 
     // Analyze value parameters
     val parameters = functionSymbol.valueParameters.map { param ->

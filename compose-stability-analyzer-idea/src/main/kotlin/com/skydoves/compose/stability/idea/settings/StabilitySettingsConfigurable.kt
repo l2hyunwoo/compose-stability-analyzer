@@ -18,7 +18,7 @@ package com.skydoves.compose.stability.idea.settings
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory
 import com.intellij.openapi.options.BoundConfigurable
-import com.intellij.openapi.project.ProjectManager
+import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.ColorPanel
 import com.intellij.ui.dsl.builder.AlignX
@@ -32,9 +32,13 @@ import java.awt.Color
  * Settings configurable for Compose Stability Analyzer plugin.
  * Appears in Settings → Tools → Compose Stability Analyzer
  */
-public class StabilitySettingsConfigurable : BoundConfigurable("Compose Stability Analyzer") {
+public class StabilitySettingsConfigurable(
+  private val project: Project,
+) : BoundConfigurable("Compose Stability Analyzer") {
 
   private val settings: StabilitySettingsState = StabilitySettingsState.getInstance()
+  private val projectSettings: StabilityProjectSettingsState =
+    StabilityProjectSettingsState.getInstance(project)
 
   // Gutter color panels
   private lateinit var stableGutterColorPanel: ColorPanel
@@ -149,9 +153,9 @@ public class StabilitySettingsConfigurable : BoundConfigurable("Compose Stabilit
         }
       }
 
-      group("External Configuration") {
+      group("Project Configuration") {
         row {
-          label("Stability configuration file:")
+          label("Stability configuration file (per-project):")
         }
 
         row {
@@ -159,13 +163,14 @@ public class StabilitySettingsConfigurable : BoundConfigurable("Compose Stabilit
             fileChooserDescriptor = FileChooserDescriptorFactory.createSingleFileDescriptor(),
             fileChosen = { file -> file.path },
           )
-            .bindText(settings::stabilityConfigurationPath)
+            .bindText(projectSettings::stabilityConfigurationPath)
             .align(AlignX.FILL)
             .comment(
               """
-              Path to a file containing custom stable type patterns.
+              Path to a file containing custom stable type patterns for this project.
               Each line should be a package/type pattern (supports wildcards).
               Types matching these patterns will be treated as stable.
+              This setting is stored per-project.
 
               Example file content:
                 # Custom stable types
@@ -266,9 +271,7 @@ public class StabilitySettingsConfigurable : BoundConfigurable("Compose Stabilit
       settings.runtimeHintColorRGB = color.rgb
     }
 
-    // Restart code analysis in all open projects to apply new settings
-    ProjectManager.getInstance().openProjects.forEach { project ->
-      DaemonCodeAnalyzer.getInstance(project).restart()
-    }
+    // Restart code analysis in the current project to apply new settings
+    DaemonCodeAnalyzer.getInstance(project).restart()
   }
 }

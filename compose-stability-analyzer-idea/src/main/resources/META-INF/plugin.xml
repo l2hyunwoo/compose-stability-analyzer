@@ -39,11 +39,15 @@
         <applicationService
                 serviceImplementation="com.skydoves.compose.stability.idea.settings.StabilitySettingsState"/>
 
-        <applicationConfigurable
+        <projectService
+                serviceImplementation="com.skydoves.compose.stability.idea.settings.StabilityProjectSettingsState"/>
+
+        <projectConfigurable
                 parentId="tools"
                 instance="com.skydoves.compose.stability.idea.settings.StabilitySettingsConfigurable"
                 id="com.skydoves.compose.stability.idea.settings.StabilitySettingsConfigurable"
-                displayName="Compose Stability Analyzer"/>
+                displayName="Compose Stability Analyzer"
+                nonDefaultProject="true"/>
 
         <!-- Documentation provider for hover tooltips -->
         <lang.documentationProvider
