@@ -74,6 +74,19 @@ class MainActivity : ComponentActivity() {
   }
 }
 
+data class UiResult<T>(
+  val data: T,
+  val isPending: Boolean,
+)
+
+@Composable
+fun MyComposable(
+  uiResult: UiResult<Unit>,
+  uiResult2: UiResult<UnstableUser>,
+  uiResult4: UiResult<List<String>>,
+) {
+}
+
 /**
  * Main screen composable.
  * This should be skippable as it has no parameters.

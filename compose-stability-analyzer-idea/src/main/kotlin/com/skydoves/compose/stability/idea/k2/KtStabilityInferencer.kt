@@ -181,8 +181,79 @@ internal class KtStabilityInferencer(private val project: Project? = null) {
       )
     }
 
-    // Analyze with empty tracking set
-    return analyzeClassSymbol(classSymbol, emptySet())
+    // Analyze the class itself
+    val classStability = analyzeClassSymbol(classSymbol, emptySet())
+
+    // Analyze type arguments if present (e.g., UiResult<Unit> -> check if Unit is stable)
+    val typeArgumentStabilities = analyzeTypeArguments(nonNullableType)
+
+    // If class is already unstable, return it directly
+    if (classStability.isUnstable()) {
+      return classStability
+    }
+
+    // If any type argument is unstable, the whole type is unstable
+    val unstableTypeArg = typeArgumentStabilities.find { it.isUnstable() }
+    if (unstableTypeArg != null) {
+      return KtStability.Certain(
+        stable = false,
+        reason = "Has unstable type argument: ${unstableTypeArg.getReasonString()}",
+      )
+    }
+
+    // If any type argument is runtime, the whole type is runtime
+    val runtimeTypeArg = typeArgumentStabilities.find { it is KtStability.Runtime }
+    if (runtimeTypeArg != null) {
+      return KtStability.Runtime(
+        className = originalTypeString,
+        reason = "Has runtime type argument: ${runtimeTypeArg.getReasonString()}",
+      )
+    }
+
+    // If class stability is runtime but all type args are stable, still runtime
+    if (classStability is KtStability.Runtime) {
+      return classStability
+    }
+
+    // All stable - return class stability with type args info if applicable
+    val hasStableTypeArgs = typeArgumentStabilities.isNotEmpty() &&
+      typeArgumentStabilities.all { it.isStable() }
+    return if (hasStableTypeArgs) {
+      KtStability.Certain(
+        stable = true,
+        reason = "${classStability.getReasonString()} (all type arguments are stable)",
+      )
+    } else {
+      classStability
+    }
+  }
+
+  /**
+   * Analyzes type arguments of a generic type.
+   * Returns empty list if type has no type arguments.
+   */
+  context(KaSession)
+  private fun analyzeTypeArguments(type: KaType): List<KtStability> {
+    return try {
+      // Use reflection to access typeArguments as it may differ between K2 versions
+      val typeArgsMethod = type::class.members.find { it.name == "typeArguments" }
+      if (typeArgsMethod != null) {
+        @Suppress("UNCHECKED_CAST")
+        val typeArgs = typeArgsMethod.call(type) as? List<*> ?: return emptyList()
+        typeArgs.mapNotNull { typeArg ->
+          // Each type argument is a KaTypeProjection which has a type property
+          val typeProperty = typeArg?.let { arg ->
+            arg::class.members.find { it.name == "type" }?.call(arg) as? KaType
+          }
+          typeProperty?.let { ktStabilityOf(it) }
+        }
+      } else {
+        emptyList()
+      }
+    } catch (e: Exception) {
+      // If we can't analyze type arguments, return empty
+      emptyList()
+    }
   }
 
   /**
