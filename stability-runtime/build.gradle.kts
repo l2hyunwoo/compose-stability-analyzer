@@ -32,6 +32,11 @@ kotlin {
   macosX64()
   macosArm64()
 
+  js {
+    browser()
+    nodejs()
+  }
+
   wasmJs {
     browser()
   }
@@ -41,6 +46,7 @@ kotlin {
     common {
       withAndroidTarget()
       withJvm()
+      withJs()
       withWasmJs()
       group("skia") {
         group("darwin") {
