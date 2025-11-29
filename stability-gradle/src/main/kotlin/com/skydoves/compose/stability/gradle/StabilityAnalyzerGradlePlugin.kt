@@ -234,10 +234,23 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
         project.provider {
           val includeTests = includeTestsProvider.get()
           project.tasks.matching { task ->
-            val isKotlinCompile = task.name.startsWith("compile") && task.name.contains("Kotlin")
-            val isTestTask = task.name.lowercase().let {
+            val taskName = task.name
+            val taskNameLower = taskName.lowercase()
+
+            // Match only actual Kotlin compilation tasks, excluding infrastructure tasks
+            val isKotlinCompile = taskName.startsWith("compile") &&
+              taskName.contains("Kotlin") &&
+              // Exclude wasm-specific sync/webpack/executable tasks
+              !taskNameLower.contains("sync") &&
+              !taskNameLower.contains("webpack") &&
+              !taskNameLower.contains("executable") &&
+              !taskNameLower.contains("link") &&
+              !taskNameLower.contains("assemble")
+
+            val isTestTask = taskNameLower.let {
               it.contains("test") || it.contains("androidtest") || it.contains("unittest")
             }
+
             // Include task if it's a Kotlin compile task and either:
             // 1. includeTests is true, OR
             // 2. it's not a test task
@@ -253,10 +266,23 @@ public class StabilityAnalyzerGradlePlugin : KotlinCompilerPluginSupportPlugin {
         project.provider {
           val includeTests = includeTestsProvider.get()
           project.tasks.matching { task ->
-            val isKotlinCompile = task.name.startsWith("compile") && task.name.contains("Kotlin")
-            val isTestTask = task.name.lowercase().let {
+            val taskName = task.name
+            val taskNameLower = taskName.lowercase()
+
+            // Match only actual Kotlin compilation tasks, excluding infrastructure tasks
+            val isKotlinCompile = taskName.startsWith("compile") &&
+              taskName.contains("Kotlin") &&
+              // Exclude wasm-specific sync/webpack/executable tasks
+              !taskNameLower.contains("sync") &&
+              !taskNameLower.contains("webpack") &&
+              !taskNameLower.contains("executable") &&
+              !taskNameLower.contains("link") &&
+              !taskNameLower.contains("assemble")
+
+            val isTestTask = taskNameLower.let {
               it.contains("test") || it.contains("androidtest") || it.contains("unittest")
             }
+
             // Include task if it's a Kotlin compile task and either:
             // 1. includeTests is true, OR
             // 2. it's not a test task
