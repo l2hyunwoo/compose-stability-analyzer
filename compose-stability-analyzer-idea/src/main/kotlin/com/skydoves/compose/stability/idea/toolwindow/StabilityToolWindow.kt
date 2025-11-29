@@ -140,6 +140,7 @@ public class StabilityToolWindow(private val project: Project) {
     actionGroup.add(FilterSkippableAction())
     actionGroup.add(FilterUnskippableAction())
     actionGroup.addSeparator()
+    actionGroup.add(SettingsAction())
     actionGroup.add(GitHubAction())
 
     val toolbar = ActionManager.getInstance()
@@ -505,6 +506,20 @@ public class StabilityToolWindow(private val project: Project) {
     override fun actionPerformed(e: AnActionEvent) {
       currentFilter = FilterType.UNSKIPPABLE
       applyFilter()
+    }
+  }
+
+  /**
+   * Settings action
+   */
+  private inner class SettingsAction : AnAction(
+    "Settings",
+    "Open Compose Stability Analyzer settings",
+    AllIcons.General.Settings,
+  ) {
+    override fun actionPerformed(e: AnActionEvent) {
+      com.intellij.openapi.options.ShowSettingsUtil.getInstance()
+        .showSettingsDialog(project, "Compose Stability Analyzer")
     }
   }
 
