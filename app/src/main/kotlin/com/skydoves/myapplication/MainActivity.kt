@@ -47,7 +47,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
-import com.skydoves.compose.stability.runtime.IgnoreStabilityReport
+import com.skydoves.myapplication.model.ThirdPartyModel
+import com.skydoves.myapplication.model.ThirdPartyModelStable
 import com.skydoves.myapplication.models.ImmutableData
 import com.skydoves.myapplication.models.MyClass2
 import com.skydoves.myapplication.models.NormalClass
@@ -56,7 +57,6 @@ import com.skydoves.myapplication.models.StableSealedClass
 import com.skydoves.myapplication.models.StableUser
 import com.skydoves.myapplication.models.UnstableUser
 import kotlinx.collections.immutable.ImmutableList
-import java.lang.StringBuilder
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -161,6 +161,20 @@ fun StableUserCard(user: StableUser) {
       Text("Stable User")
       Text("Name: ${user.name}")
       Text("Age: ${user.age}")
+    }
+  }
+}
+
+@Composable
+fun ThirdPartyCard(
+  thirdPartyModel: ThirdPartyModel,
+  thirdPartyModelStable: ThirdPartyModelStable,
+) {
+  Card {
+    Column(modifier = Modifier.padding(16.dp)) {
+      Text("Stable User")
+      Text("Name: ${thirdPartyModel.name}")
+      Text("Age: ${thirdPartyModelStable.count}")
     }
   }
 }
@@ -366,7 +380,7 @@ fun ActionButton(
  * These are only used in Android Studio previews, not in production.
  */
 @com.skydoves.compose.stability.runtime.IgnoreStabilityReport
-@androidx.compose.ui.tooling.preview.Preview(showBackground = true)
+@Preview(showBackground = true)
 @Composable
 fun StableUserCardPreview() {
   StableUserCard(StableUser("Preview User", 25))
