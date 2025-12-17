@@ -16,6 +16,11 @@ All notable changes to the IntelliJ IDEA plugin will be documented in this file.
 - More robust cross-module dependency passing mechanism in Gradle plugin
 - Better compatibility with multi-module Android projects
 
+### Known Issues
+- Tool window may show "Unknown.kt" for composables defined inside classes/objects
+  - This occurs because source file lookup only searches top-level declarations
+  - Will be addressed in a future release
+
 ## [0.6.3] - 2025-12-13
 
 ### Added
